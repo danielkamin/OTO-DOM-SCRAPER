@@ -7,11 +7,10 @@
     "start": "node dist/index.js",
     "dev:watch": "tsx watch ./src/index.ts",
     "dev": "tsx ./src/index.ts",
-    "clean": "rimraf coverage build tmp",
+    "clean": "rimraf coverage dist tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -w -p tsconfig.json",
-    "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "lint": "eslint . --ext .ts --ext .mts",
     "prettier": "prettier --config .prettierrc --write ."
   },
@@ -20,7 +19,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "nodemailer": "^6.9.1",
-    "puppeteer-core": "^19.6.3"
+    "puppeteer": "^19.6.3"
   },
   "devDependencies": {
     "@types/node": "^18.11.19",
