@@ -1,4 +1,4 @@
-import { ElementHandle, Page } from 'puppeteer';
+import { ElementHandle } from 'puppeteer';
 
 interface Location {
   name: string;
@@ -13,7 +13,14 @@ export interface PriceByRegionAndCities extends LocationWithPrice {
   location?: LocationWithPrice[];
 }
 
-export interface ElementHandleWithStatus {
+export interface ElementHandleWithStatus<T extends Node> {
   isActive: boolean;
-  element: ElementHandle<HTMLLabelElement>;
+  element: ElementHandle<T>;
+}
+
+export interface DropDownElement extends Location {
+  checkbox: ElementHandleWithStatus<HTMLLabelElement>;
+  label: ElementHandleWithStatus<HTMLLabelElement>;
+  button?: ElementHandleWithStatus<HTMLButtonElement>;
+  children?: DropDownElement[];
 }
