@@ -7,7 +7,6 @@ import {
   goFromMainToBaseSearchResults,
   getRegionsList,
   expandLocationPicker,
-  selectRegion,
   nextPage,
   searchAndWaitForNavigation,
   autoScroll,
@@ -15,11 +14,12 @@ import {
   getCitiesList,
   selectCity,
   scrollToPaginationBar,
+  delay,
+  getListingsCount,
+  showListingsByMarketTypeWithCurrentFilters,
 } from './pageInteraction';
 import { getAveragePriceFromListingItem } from './extractPriceData';
-
-const delay = (milliseconds: number): Promise<unknown> =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds));
+import { ListingType, ListingTypes } from './types';
 
 (async (): Promise<void> => {
   const doc = await initDoc();
@@ -27,6 +27,7 @@ const delay = (milliseconds: number): Promise<unknown> =>
     console.log('Error occured while loading Google Spreadsheet.');
     return;
   }
+  const scriptStart = new Date();
   const isHeadless = process.env.BRROWSER_LAUNCH;
   const browser = await puppeteer.launch({ headless: !!isHeadless });
   const page = await browser.newPage();
@@ -50,27 +51,41 @@ const delay = (milliseconds: number): Promise<unknown> =>
 
     for (let j = 0; j < cities.length; j++) {
       let nextPageAvailable = true;
-      const cityPrices = new Array<number>();
+      let cityPrices = new Array<number>();
 
-      await expandLocationPicker(page);
-      await expandCityPicker(page, regions[i].name);
-      await selectCity(page, cities[j].name);
-      await searchAndWaitForNavigation(page);
-      await delay(1000);
+      for (let x = 0; x < ListingTypes.length; x++) {
+        await expandLocationPicker(page);
+        await expandCityPicker(page, regions[i].name);
+        await selectCity(page, cities[j].name);
+        await searchAndWaitForNavigation(page);
+        await showListingsByMarketTypeWithCurrentFilters(page, ListingTypes[x]);
+        await delay(1000);
 
-      while (nextPageAvailable) {
-        await autoScroll(page);
-        cityPrices.push(...(await getAveragePriceFromListingItem(page)));
-        await scrollToPaginationBar(page);
-        nextPageAvailable = await nextPage(page);
+        const listingsCount = await getListingsCount(page);
+        while (nextPageAvailable) {
+          await autoScroll(page);
+          cityPrices.push(...(await getAveragePriceFromListingItem(page)));
+          await scrollToPaginationBar(page);
+          nextPageAvailable = await nextPage(page);
+        }
+        const avgPrice =
+          cityPrices.length > 0 ? cityPrices.reduce((a, b) => a + b, 0) / cityPrices.length : 0;
+        const localeAvgPrice = Number(avgPrice.toFixed(2)).toLocaleString('pl-PL');
+        regionSheet.addRow([
+          cities[j].name,
+          new Date().toLocaleDateString(),
+          localeAvgPrice,
+          ListingTypes[x],
+          listingsCount,
+        ]);
+
+        nextPageAvailable = true;
+        cityPrices = [];
+        await page.goto(baseSearchUrl);
       }
-
-      const avgPrice =
-        cityPrices.length > 0 ? cityPrices.reduce((a, b) => a + b, 0) / cityPrices.length : 0;
-      const localeAvgPrice = Number(avgPrice.toFixed(2)).toLocaleString('pl-PL');
-      regionSheet.addRow([cities[j].name, new Date().toLocaleDateString(), localeAvgPrice, 'all']);
-
-      await page.goto(baseSearchUrl);
     }
   }
+
+  const scriptEnd = new Date();
+  console.log('Web scraping took: ', (scriptEnd.getTime() - scriptStart.getTime()) / 1000, 's');
 })();

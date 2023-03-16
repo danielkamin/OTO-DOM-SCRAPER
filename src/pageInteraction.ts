@@ -1,5 +1,5 @@
 import { ElementHandle, Page } from 'puppeteer';
-import { DropDownElement, ElementHandleWithStatus, RegionWithCities } from './types';
+import { DropDownElement, ElementHandleWithStatus, ListingType, RegionWithCities } from './types';
 
 const OTO_DOM_BASE_URL = 'https://www.otodom.pl/';
 const regionDropDownElements: DropDownElement[] = [];
@@ -200,4 +200,30 @@ export const scrollToPaginationBar = async (page: Page): Promise<void> => {
     const paginationBar = document.querySelector('div[role="navigation"]');
     paginationBar.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
   });
+};
+
+export const getListingsCount = async (page: Page): Promise<number> => {
+  const listingsLabels = await page.$$(
+    'strong[data-cy="search.listing-panel.label.ads-number"] span',
+  );
+  if (!listingsLabels[1]) return 0;
+  const listingsCount = await listingsLabels[1].evaluate((s) => s.innerText);
+  return Number(listingsCount);
+};
+
+export const delay = (milliseconds: number): Promise<unknown> =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+export const showListingsByMarketTypeWithCurrentFilters = async (
+  page: Page,
+  marketType: ListingType,
+): Promise<void> => {
+  const currentUrl = new URL(page.url());
+
+  if (currentUrl.pathname.includes(marketType)) {
+    currentUrl.pathname = currentUrl.pathname.replace(`/${marketType}`, '');
+  }
+
+  currentUrl.pathname = `${currentUrl.pathname}/${marketType}`;
+  await page.goto(currentUrl.href);
 };

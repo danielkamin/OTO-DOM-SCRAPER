@@ -24,3 +24,5 @@ export interface DropDownElement extends Location {
   button?: ElementHandleWithStatus<HTMLButtonElement>;
   children?: DropDownElement[];
 }
+export const ListingTypes = ['rynek-wtorny', 'rynek-pierwotny'] as const;
+export type ListingType = (typeof ListingTypes)[number];

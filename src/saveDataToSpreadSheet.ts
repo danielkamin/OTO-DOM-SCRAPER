@@ -18,5 +18,8 @@ export const initDoc = async (): Promise<GoogleSpreadsheet | null> => {
 export const getSpreadSheetByTitle = async (title: string): Promise<GoogleSpreadsheetWorksheet> => {
   const sheet = doc.sheetsByTitle[title];
   if (sheet) return sheet;
-  return await doc.addSheet({ title, headerValues: ['miasto', 'data', 'cena', 'typ sprzedaży'] });
+  return await doc.addSheet({
+    title,
+    headerValues: ['miasto', 'data', 'cena', 'typ sprzedaży', 'ilość ogłoszeń'],
+  });
 };
