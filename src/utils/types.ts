@@ -1,16 +1,23 @@
+import { DATA_OUTPUT_DICTIONARY } from './constants.js';
 import { ElementHandle } from 'puppeteer';
+
+export type ObjectValues<T> = T[keyof T];
+
+export type DataOutputUnion = keyof typeof DATA_OUTPUT_DICTIONARY;
+export type City = {
+  name: string;
+  zones?: string[];
+};
+export type RegionWithCity = {
+  name: string;
+  city: City;
+};
 
 interface Location {
   name: string;
 }
-interface LocationWithPrice extends Location {
-  price: number;
-}
-export interface RegionWithCities extends Location {
+export interface ParentLocation extends Location {
   location?: Location[];
-}
-export interface PriceByRegionAndCities extends LocationWithPrice {
-  location?: LocationWithPrice[];
 }
 
 export interface ElementHandleWithStatus<T extends Node> {

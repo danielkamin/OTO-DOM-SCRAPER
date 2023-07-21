@@ -1,5 +1,10 @@
 import { ElementHandle, Page } from 'puppeteer';
-import { DropDownElement, ElementHandleWithStatus, ListingType, RegionWithCities } from './types';
+import {
+  DropDownElement,
+  ElementHandleWithStatus,
+  ListingType,
+  ParentLocation,
+} from './utils/types.ts';
 
 const OTO_DOM_BASE_URL = 'https://www.otodom.pl/';
 const regionDropDownElements: DropDownElement[] = [];
@@ -35,8 +40,8 @@ export const expandCityPicker = async (page: Page, region: string): Promise<bool
 export const getCitiesList = async (
   page: Page,
   parentRegion: string,
-): Promise<Array<RegionWithCities>> => {
-  const cities: Array<RegionWithCities> = [];
+): Promise<Array<ParentLocation>> => {
+  const cities: Array<ParentLocation> = [];
   await page.waitForSelector('ul[data-testid="regions-list"] ul li[role="menuitem"]');
   const citiesHTMLElementsList = await page.$$(
     'ul[data-testid="regions-list"] ul li[role="menuitem"]',
@@ -68,8 +73,8 @@ export const getCitiesList = async (
   return cities;
 };
 
-export const getRegionsList = async (page: Page): Promise<Array<RegionWithCities>> => {
-  const regions: Array<RegionWithCities> = [];
+export const getRegionsList = async (page: Page): Promise<Array<ParentLocation>> => {
+  const regions: Array<ParentLocation> = [];
   const regionsHTMLElementsList = await page.$$(
     'ul[data-testid="regions-list"] li[role="menuitem"]',
   );
@@ -210,9 +215,6 @@ export const getListingsCount = async (page: Page): Promise<number> => {
   const listingsCount = await listingsLabels[1].evaluate((s) => s.innerText);
   return Number(listingsCount);
 };
-
-export const delay = (milliseconds: number): Promise<unknown> =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 export const showListingsByMarketTypeWithCurrentFilters = async (
   page: Page,
