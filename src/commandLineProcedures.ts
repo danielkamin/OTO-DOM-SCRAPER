@@ -4,10 +4,17 @@ import figlet from 'figlet';
 import { createSpinner } from 'nanospinner';
 import { sleep } from './utils/helpers.ts';
 
-import { DATA_OUTPUT_DICTIONARY, DataOutputUnion, RegionWithCity } from './utils/index.ts';
-import { GoogleSpreadsheetConnector } from './googleSheetsConnectionSingleton.ts';
-import puppeteer from 'puppeteer';
 import {
+  City,
+  DATA_OUTPUT_DICTIONARY,
+  DataOutputUnion,
+  ParentLocation,
+  RegionWithCity,
+} from './utils/index.ts';
+import { GoogleSpreadsheetConnector } from './googleSheetsConnectionSingleton.ts';
+import puppeteer, { Page } from 'puppeteer';
+import {
+  expandAndGetCityZonesList,
   expandCityPicker,
   expandLocationPicker,
   getCitiesList,
@@ -15,7 +22,10 @@ import {
   goFromMainToBaseSearchResults,
 } from './pageInteraction.ts';
 
-export const startBanner = () => {
+let page: Page;
+let baseSearchUrl: string;
+
+export const displayStartBanner = (): void => {
   console.log(chalk.green(figlet.textSync('OTO  DOM  SCRAPER')));
   console.log(
     chalk.blue(
@@ -23,7 +33,6 @@ export const startBanner = () => {
     ),
   );
 };
-
 export const askMethodOfDataOutput = async (): Promise<DataOutputUnion> => {
   const answers = await inquirer.prompt({
     name: 'data_output',
@@ -33,9 +42,7 @@ export const askMethodOfDataOutput = async (): Promise<DataOutputUnion> => {
   });
 
   switch (answers.data_output) {
-    case DATA_OUTPUT_DICTIONARY.GOOGLE_SHEETS:
-      await (await GoogleSpreadsheetConnector.getInstance()).checkAndSetConfigConfig();
-      break;
+    case DATA_OUTPUT_DICTIONARY.XLSX_FILE:
     case DATA_OUTPUT_DICTIONARY.GOOGLE_SHEETS:
       await (await GoogleSpreadsheetConnector.getInstance()).checkAndSetConfigConfig();
       break;
@@ -44,30 +51,37 @@ export const askMethodOfDataOutput = async (): Promise<DataOutputUnion> => {
   }
   return answers.data_output;
 };
-
-export const askForCitiesToScrape = async (): Promise<any> => {
-  let selectedCities: RegionWithCity[] = [];
-
-  let spinner = createSpinner('Launching browser').start();
+export const launchBrowser = async (): Promise<boolean> => {
+  const spinner = createSpinner('Launching browser').start();
   const browser = await puppeteer.launch({ headless: false });
-  const page = await browser.newPage();
+  page = await browser.newPage();
   spinner.success();
-
-  spinner = createSpinner('Starting search').start();
+  return true;
+};
+export const goToMainPage = async (): Promise<string> => {
+  const spinner = createSpinner('Starting search').start();
   await goFromMainToBaseSearchResults(page);
   await page.waitForNavigation();
-  const baseSearchUrl = page.url();
+  baseSearchUrl = page.url();
   spinner.success();
-
-  spinner = createSpinner('Scraping regions').start();
+  return baseSearchUrl;
+};
+export const loadAllRegions = async (): Promise<ParentLocation[]> => {
+  const spinner = createSpinner('Scraping regions').start();
   await expandLocationPicker(page);
   const regions = await getRegionsList(page);
   await page.reload();
   await sleep(1000);
   spinner.success();
+  return regions;
+};
+export const askForCitiesToScrape = async (
+  regions: ParentLocation[],
+): Promise<RegionWithCity[]> => {
+  let selectedCities: RegionWithCity[] = [];
 
-  for (let i = 0; i < regions.length; i++) {
-    spinner = createSpinner(`Scraping cities in ${regions[i].name}`).start();
+  for (let i = 0; i < 1; i++) {
+    const spinner = createSpinner(`Scraping cities in ${regions[i].name}`).start();
     await expandLocationPicker(page);
     await expandCityPicker(page, regions[i].name);
     const cities = await getCitiesList(page, regions[i].name);
@@ -85,4 +99,16 @@ export const askForCitiesToScrape = async (): Promise<any> => {
     selectedCities = [...selectedCities, ...answers[`cities-${regions[i].name}`]];
   }
   return selectedCities;
+};
+
+export const loadZonesForSpecifiedCities = async (regions: RegionWithCity[]): Promise<boolean> => {
+  for (let i = 0; i < regions.length; i++) {
+    let spinner = createSpinner(`Loading zones for ${regions[i].city.name}`).start();
+    await expandLocationPicker(page);
+    await expandCityPicker(page, regions[i].name);
+    await expandAndGetCityZonesList(page, regions[i].city.name);
+    spinner.success();
+  }
+  console.log(JSON.stringify(regions, null, 2));
+  return true;
 };

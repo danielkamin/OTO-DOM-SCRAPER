@@ -1,4 +1,4 @@
-import { DATA_OUTPUT_DICTIONARY } from './constants.js';
+import { DATA_OUTPUT_DICTIONARY, ListingTypes } from './constants.js';
 import { ElementHandle } from 'puppeteer';
 
 export type ObjectValues<T> = T[keyof T];
@@ -31,5 +31,4 @@ export interface DropDownElement extends Location {
   button?: ElementHandleWithStatus<HTMLButtonElement>;
   children?: DropDownElement[];
 }
-export const ListingTypes = ['rynek-wtorny', 'rynek-pierwotny'] as const;
 export type ListingType = (typeof ListingTypes)[number];

@@ -2,20 +2,27 @@
 
 import { sleep } from './utils/helpers.ts';
 import { DataOutputUnion } from './utils/types.ts';
-import { askForCitiesToScrape, askMethodOfDataOutput, startBanner } from './commandLinePrompts.ts';
+import {
+  askForCitiesToScrape,
+  askMethodOfDataOutput,
+  displayStartBanner,
+  goToMainPage,
+  launchBrowser,
+  loadAllRegions,
+  loadZonesForSpecifiedCities,
+} from './commandLineProcedures.ts';
 
 let dataOutput: DataOutputUnion;
 
 console.clear();
-startBanner();
+displayStartBanner();
 await sleep(1000);
 console.clear();
 dataOutput = await askMethodOfDataOutput();
 console.clear();
-const cities = await askForCitiesToScrape();
-console.log(cities);
-//todo
-//if zones available scrape every zone
-//else scrape full city
-//save to spreadsheet
+await launchBrowser();
+await goToMainPage();
+const regions = await loadAllRegions();
+const cities = await askForCitiesToScrape(regions);
+await loadZonesForSpecifiedCities(cities);
 await sleep();

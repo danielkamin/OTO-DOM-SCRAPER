@@ -5,7 +5,6 @@ specifiers:
   '@types/google-spreadsheet': ^3.3.1
   '@types/inquirer': ^9.0.3
   '@types/node': ^18.11.19
-  '@types/nodemailer': ^6.4.7
   '@typescript-eslint/eslint-plugin': ^5.50.0
   '@typescript-eslint/parser': ^5.50.0
   chalk: ^5.3.0
@@ -13,10 +12,10 @@ specifiers:
   dotenv: ^16.0.3
   eslint: ^8.33.0
   eslint-config-prettier: ^8.6.0
+  figlet: ^1.6.0
   google-spreadsheet: ^3.3.0
   inquirer: ^9.2.8
   nanospinner: ^1.1.0
-  nodemailer: ^6.9.1
   prettier: ^2.8.3
   puppeteer: ^19.6.3
   rimraf: ^4.1.2
@@ -24,20 +23,19 @@ specifiers:
   typescript: ^4.9.5
 
 dependencies:
-  '@types/figlet': 1.5.6
-  '@types/inquirer': 9.0.3
   chalk: 5.3.0
   dotenv: 16.3.1
+  figlet: 1.6.0
   google-spreadsheet: 3.3.0
   inquirer: 9.2.8
   nanospinner: 1.1.0
-  nodemailer: 6.9.3
   puppeteer: 19.11.1_typescript@4.9.5
 
 devDependencies:
+  '@types/figlet': 1.5.6
   '@types/google-spreadsheet': 3.3.2
+  '@types/inquirer': 9.0.3
   '@types/node': 18.16.19
-  '@types/nodemailer': 6.4.8
   '@typescript-eslint/eslint-plugin': 5.62.0_813dde211e9fed146d00a3a5a279daee
   '@typescript-eslint/parser': 5.62.0_eslint@8.45.0+typescript@4.9.5
   cross-env: 7.0.3
@@ -376,7 +374,7 @@ packages:
 
   /@types/figlet/1.5.6:
     resolution: {integrity: sha512-AOdn9cKJGXpqfHeif16xeGMwWefB4nsOyxkdRMpc+PEP3nUxzu3psJfIqhjrCNW4Sejt5i6rISWmEwK0sw03mA==}
-    dev: false
+    dev: true
 
   /@types/google-spreadsheet/3.3.2:
     resolution: {integrity: sha512-uBwRhNwx5JPsmrV+XmD77dxL8vVdOY/Aba1kx/mxtR6jePLZIN06I1jjEXEFidAyLUz+JWCphsVk8CCJ2Kzy2w==}
@@ -387,7 +385,7 @@ packages:
     dependencies:
       '@types/through': 0.0.30
       rxjs: 7.8.1
-    dev: false
+    dev: true
 
   /@types/json-schema/7.0.12:
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
@@ -395,12 +393,6 @@ packages:
 
   /@types/node/18.16.19:
     resolution: {integrity: sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==}
-
-  /@types/nodemailer/6.4.8:
-    resolution: {integrity: sha512-oVsJSCkqViCn8/pEu2hfjwVO+Gb3e+eTWjg3PcjeFKRItfKpKwHphQqbYmPQrlMk+op7pNNWPbsJIEthpFN/OQ==}
-    dependencies:
-      '@types/node': 18.16.19
-    dev: true
 
   /@types/semver/7.5.0:
     resolution: {integrity: sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==}
@@ -410,7 +402,7 @@ packages:
     resolution: {integrity: sha512-FvnCJljyxhPM3gkRgWmxmDZyAQSiBQQWLI0A0VFL0K7W1oRUrPJSqNO0NvTnLkBcotdlp3lKvaT0JrnyRDkzOg==}
     dependencies:
       '@types/node': 18.16.19
-    dev: false
+    dev: true
 
   /@types/yauzl/2.10.0:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
@@ -1124,6 +1116,12 @@ packages:
       pend: 1.2.0
     dev: false
 
+  /figlet/1.6.0:
+    resolution: {integrity: sha512-31EQGhCEITv6+hi2ORRPyn3bulaV9Fl4xOdR169cBzH/n1UqcxsiSB/noo6SJdD7Kfb1Ljit+IgR1USvF/XbdA==}
+    engines: {node: '>= 0.4.0'}
+    hasBin: true
+    dev: false
+
   /figures/5.0.0:
     resolution: {integrity: sha512-ej8ksPF4x6e5wvK9yevct0UCXh8TTFlWGVLlgjZuoBH1HwjIfKE/IdL5mq89sFA7zELi1VhKpmtDnrs7zWyeyg==}
     engines: {node: '>=14'}
@@ -1665,11 +1663,6 @@ packages:
     engines: {node: '>= 6.13.0'}
     dev: false
 
-  /nodemailer/6.9.3:
-    resolution: {integrity: sha512-fy9v3NgTzBngrMFkDsKEj0r02U7jm6XfC3b52eoNV+GCrGj+s8pt5OqhiJdWKuw51zCTdiNR/IUD1z33LIIGpg==}
-    engines: {node: '>=6.0.0'}
-    dev: false
-
   /once/1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
     dependencies:
@@ -1931,7 +1924,6 @@ packages:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
       tslib: 2.6.0
-    dev: false
 
   /safe-buffer/5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
@@ -2073,7 +2065,6 @@ packages:
 
   /tslib/2.6.0:
     resolution: {integrity: sha512-7At1WUettjcSRHXCyYtTselblcHl9PJFFVKiCAy/bY97+BPZXSQ2wbq0P9s8tK2G7dFQfNnlJnPAiArVBVBsfA==}
-    dev: false
 
   /tsutils/3.21.0_typescript@4.9.5:
     resolution: {integrity: sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA==}

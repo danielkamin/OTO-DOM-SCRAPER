@@ -157,6 +157,24 @@ export const selectCity = async (page: Page, city: string): Promise<boolean> => 
   return false;
 };
 
+export const expandAndGetCityZonesList = async (page: Page, city: string): Promise<boolean> => {
+  const zones: string[] = [];
+  await page.waitForSelector('ul[data-testid="regions-list"] ul li[role="menuitem"]');
+  const citiesHTMLElementsList = await page.$$(
+    'ul[data-testid="regions-list"] ul li[role="menuitem"]',
+  );
+  for (let i = 0; i < citiesHTMLElementsList.length; i++) {
+    const labelElement = await citiesHTMLElementsList[i].$('label[data-cy*="location"]');
+    if (!labelElement) continue;
+    const cityText = await labelElement.evaluate((e) => e.textContent);
+    if (cityText === city) {
+      const expandZonesPickerBtn = await citiesHTMLElementsList[i].$('button');
+      if (expandZonesPickerBtn) console.log(city);
+    }
+  }
+  return false;
+};
+
 export const searchAndWaitForNavigation = async (page: Page): Promise<void> => {
   const searchBtn = await page.waitForSelector('#search-form-submit');
   await searchBtn.click();
@@ -229,3 +247,5 @@ export const showListingsByMarketTypeWithCurrentFilters = async (
   currentUrl.pathname = `${currentUrl.pathname}/${marketType}`;
   await page.goto(currentUrl.href);
 };
+
+export const;
